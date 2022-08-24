@@ -5,22 +5,15 @@
 #include <ArduinoJson.h>
 #include <ESP8266mDNS.h>
 
+
 WebSocketsServer webSocket(81);
 ESP8266WebServer server(80);
 
-void SerializeJSONData(DynamicJsonDocument doc){
-    int isforward = doc["sforward"];
-    int left = doc["isleft"]; // isleft
-    int right = doc["isright"];
-    double motorSpeed = doc["speed"];
-    
-    if (isforward == 1){
-      Forward();
-    }
-    
-    if (isforward == 0){
-      Reverse();
-    }
+void noMovement(){
+  digitalWrite(D1, LOW);
+  digitalWrite(D3, LOW);
+  digitalWrite(D2, LOW);
+  digitalWrite(D4, LOW);
 }
 
 void Forward(){
@@ -30,12 +23,79 @@ void Forward(){
   digitalWrite(D4, LOW);
 }
 
+
 void Reverse(){
   digitalWrite(D2, HIGH);
   digitalWrite(D4, HIGH);
   digitalWrite(D1, LOW);
   digitalWrite(D3, LOW);
 }
+
+void leftfunc(){
+  //left motor
+  digitalWrite(D1,HIGH);
+  digitalWrite(D2,LOW);
+  
+  //right motor
+  digitalWrite(D3,LOW);
+  digitalWrite(D4,HIGH);
+}
+
+void rightfunc(){
+  //left motor
+  digitalWrite(D1,LOW);
+  digitalWrite(D2,HIGH);
+  
+  //right motor
+  digitalWrite(D3,HIGH);
+  digitalWrite(D4,LOW);
+}
+
+void SerializeJSONData(DynamicJsonDocument doc){
+    int isforward = doc["isforward"];
+    int left = doc["isleft"]; // isleft
+    int right = doc["isright"];
+    double motorSpeed = doc["speed"];
+
+    if(motorSpeed==0.0 && left != 1 && right != 1){
+      noMovement();
+      Serial.println("MOVEMENT STOPPED");
+    }
+    
+    if (isforward == 1 && motorSpeed > 1.0){
+      Forward();
+    }
+    if (isforward == 0 && motorSpeed > 1.0){
+      Reverse();
+    }
+    if(left == 1){
+      leftfunc();
+    }
+    if(right == 1){
+      rightfunc();
+    }
+}
+
+void right(){
+  //left motor
+  digitalWrite(D1,HIGH);
+  digitalWrite(D2,LOW);
+  
+  //right motor
+  digitalWrite(D3,LOW);
+  digitalWrite(D4,HIGH);
+}
+
+void left(){
+  //left motor
+  digitalWrite(D1,LOW);
+  digitalWrite(D2,HIGH);
+  
+  //right motor
+  digitalWrite(D3,HIGH);
+  digitalWrite(D4,LOW);
+}
+
 
 void webSocketEvent(uint8_t num, WStype_t type, uint8_t *payload, size_t length)
 {
@@ -68,7 +128,7 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t *payload, size_t length)
       return;
     }
     
-    SerializeJSONData(doc); // data function called here 
+    SerializeJSONData(doc);// data function called here 
   }
 }
 
