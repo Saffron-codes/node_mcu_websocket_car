@@ -15,22 +15,22 @@ void SerializeJSONData(DynamicJsonDocument doc){
     double motorSpeed = doc["speed"];
     
     if (isforward == 1){
-      isForward()
+      Forward();
     }
     
     if (isforward == 0){
-      isReverse()
+      Reverse();
     }
 }
 
-void isForward(){
+void Forward(){
   digitalWrite(D1, HIGH);
   digitalWrite(D3, HIGH);
   digitalWrite(D2, LOW);
   digitalWrite(D4, LOW);
 }
 
-void isReverse(){
+void Reverse(){
   digitalWrite(D2, HIGH);
   digitalWrite(D4, HIGH);
   digitalWrite(D1, LOW);
@@ -68,7 +68,7 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t *payload, size_t length)
       return;
     }
     
-    SerializeJSONData(doc) // data function called here 
+    SerializeJSONData(doc); // data function called here 
   }
 }
 
