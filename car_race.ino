@@ -8,27 +8,34 @@
 WebSocketsServer webSocket(81);
 ESP8266WebServer server(80);
 
-void data(DynamicJsonDocument doc){
+void SerializeJSONData(DynamicJsonDocument doc){
     int isforward = doc["sforward"];
     int left = doc["isleft"]; // isleft
     int right = doc["isright"];
     double motorSpeed = doc["speed"];
-    if (isforward == 1)
-    {
-      digitalWrite(D1, HIGH);
-      digitalWrite(D3, HIGH);
-      digitalWrite(D2, LOW);
-      digitalWrite(D4, LOW);
+    
+    if (isforward == 1){
+      isForward()
     }
-    if (isforward == 0)
-    {
-      digitalWrite(D2, HIGH);
-      digitalWrite(D4, HIGH);
-      digitalWrite(D1, LOW);
-      digitalWrite(D3, LOW);
+    
+    if (isforward == 0){
+      isReverse()
     }
 }
 
+void isForward(){
+  digitalWrite(D1, HIGH);
+  digitalWrite(D3, HIGH);
+  digitalWrite(D2, LOW);
+  digitalWrite(D4, LOW);
+}
+
+void isReverse(){
+  digitalWrite(D2, HIGH);
+  digitalWrite(D4, HIGH);
+  digitalWrite(D1, LOW);
+  digitalWrite(D3, LOW);
+}
 
 void webSocketEvent(uint8_t num, WStype_t type, uint8_t *payload, size_t length)
 {
@@ -61,7 +68,7 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t *payload, size_t length)
       return;
     }
     
-    data(doc) // data function called here 
+    SerializeJSONData(doc) // data function called here 
   }
 }
 
