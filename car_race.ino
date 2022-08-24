@@ -39,9 +39,9 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t *payload, size_t length)
       return;
     }
     int isforward = doc["isforward"];
-    int left = doc["left"];
-    int right = doc["right"];
-    double SL = doc["SL"];
+    int left = doc["isleft"];
+    int right = doc["isright"];
+    double motorSpeed = doc["speed"];
     if (isforward == 1)
     {
       digitalWrite(D1, HIGH);
