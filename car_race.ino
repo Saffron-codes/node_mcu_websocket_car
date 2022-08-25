@@ -9,46 +9,65 @@
 WebSocketsServer webSocket(81);
 ESP8266WebServer server(80);
 
-void noMovement(){
-  digitalWrite(D1, LOW);
-  digitalWrite(D3, LOW);
-  digitalWrite(D2, LOW);
-  digitalWrite(D4, LOW);
-}
+//void noMovement(double motorSpeed){
+//  digitalWrite(D1, LOW);
+//  digitalWrite(D3, LOW);
+//  digitalWrite(D2, LOW);
+//  digitalWrite(D4, LOW);
+//  analogWrite(,motorSpeed);
+//  analogWrite(,motorSpeed);
+//}
 
-void Forward(){
-  digitalWrite(D1, HIGH);
-  digitalWrite(D3, HIGH);
-  digitalWrite(D2, LOW);
-  digitalWrite(D4, LOW);
-}
+void Forward(double motorSpeed){
 
-
-void Reverse(){
-  digitalWrite(D2, HIGH);
-  digitalWrite(D4, HIGH);
-  digitalWrite(D1, LOW);
-  digitalWrite(D3, LOW);
-}
-
-void leftfunc(){
   //left motor
-  digitalWrite(D1,HIGH);
-  digitalWrite(D2,LOW);
+  digitalWrite(D1, HIGH); //IN1
+  digitalWrite(D2, LOW); //IN2
+  analogWrite(D5,motorSpeed); //speed
+
+  //right motor
+  digitalWrite(D3, LOW); //IN3
+  digitalWrite(D4, HIGH); //IN4
+  analogWrite(D7,motorSpeed); //speed
+}
+
+
+void Reverse(double motorSpeed){
+  
+  //left motor
+  digitalWrite(D1, LOW); //IN1
+  digitalWrite(D2, HIGH); //IN2
+  analogWrite(D5,motorSpeed); //speed
   
   //right motor
-  digitalWrite(D3,LOW);
-  digitalWrite(D4,HIGH);
+  digitalWrite(D3, HIGH); //IN3
+  digitalWrite(D4, LOW); //IN4
+  analogWrite(D7,motorSpeed); //speed
 }
 
-void rightfunc(){
+void leftfunc(double motorSpeed){
+  
   //left motor
-  digitalWrite(D1,LOW);
-  digitalWrite(D2,HIGH);
+  digitalWrite(D1,LOW); //IN1
+  digitalWrite(D2,HIGH); //IN2
+  analogWrite(D5,motorSpeed); //speed
   
   //right motor
-  digitalWrite(D3,HIGH);
-  digitalWrite(D4,LOW);
+  digitalWrite(D3,LOW); //IN3
+  digitalWrite(D4,HIGH); //IN4
+  analogWrite(D7,motorSpeed);//speed
+}
+
+void rightfunc(double motorSpeed){
+  //left motor
+  digitalWrite(D1,HIGH); //IN1
+  digitalWrite(D2,LOW); //IN2
+  analogWrite(D5,motorSpeed); //speedh
+  
+  //right motor
+  digitalWrite(D3,HIGH); //IN3
+  digitalWrite(D4,LOW); //IN4
+  analogWrite(D7,motorSpeed); //speed
 }
 
 void SerializeJSONData(DynamicJsonDocument doc){
@@ -57,45 +76,24 @@ void SerializeJSONData(DynamicJsonDocument doc){
     int right = doc["isright"];
     double motorSpeed = doc["speed"];
 
-    if(motorSpeed==0.0 && left != 1 && right != 1){
-      noMovement();
-      Serial.println("MOVEMENT STOPPED");
-    }
+//    if(motorSpeed==0.0 && left != 1 && right != 1){
+//      noMovement();
+//      Serial.println("MOVEMENT STOPPED");
+//    }
     
-    if (isforward == 1 && motorSpeed > 1.0){
-      Forward();
+    if (isforward == 1 ){  //&& motorSpeed > 1.0
+      Forward(motorSpeed);
     }
-    if (isforward == 0 && motorSpeed > 1.0){
-      Reverse();
+    if (isforward == 0)   { //&& motorSpeed > 1.0)
+      Reverse(motorSpeed);
     }
     if(left == 1){
-      leftfunc();
+      leftfunc(motorSpeed);
     }
     if(right == 1){
-      rightfunc();
+      rightfunc(motorSpeed);
     }
 }
-
-void right(){
-  //left motor
-  digitalWrite(D1,HIGH);
-  digitalWrite(D2,LOW);
-  
-  //right motor
-  digitalWrite(D3,LOW);
-  digitalWrite(D4,HIGH);
-}
-
-void left(){
-  //left motor
-  digitalWrite(D1,LOW);
-  digitalWrite(D2,HIGH);
-  
-  //right motor
-  digitalWrite(D3,HIGH);
-  digitalWrite(D4,LOW);
-}
-
 
 void webSocketEvent(uint8_t num, WStype_t type, uint8_t *payload, size_t length)
 {
@@ -139,7 +137,9 @@ void setup()
   pinMode(D2, OUTPUT);
   pinMode(D3, OUTPUT);
   pinMode(D4, OUTPUT);
-  WiFi.softAP("Car", "");
+  //WiFi.hostname("vishal");
+  //WiFi.mode(WIFI_AP);
+  WiFi.softAP("IoT Car", "");
   Serial.println("softap");
   Serial.println("");
   Serial.println(WiFi.softAPIP());
